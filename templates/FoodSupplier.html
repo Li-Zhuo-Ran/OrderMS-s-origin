@@ -307,81 +307,76 @@
 
 <body class="page-food-supplier">
     <div id="food-supplier-app" v-cloak>
-    <form style="display:none;">{% csrf_token %}</form>
-    <!-- 顶部导航栏 -->
-    <div class="top-header">
-        <div class="header-left">
-            <div class="system-title">后厨管理系统</div>
-            <div class="status-tabs">
-                <button class="status-tab">待制作</button>
+        <form style="display:none;">{% csrf_token %}</form>
+        <!-- 顶部导航栏 -->
+        <div class="top-header">
+            <div class="header-left">
+                <div class="system-title">后厨管理系统（Vue.js）</div>
+                <div class="status-tabs">
+                    <button class="status-tab active">订单状态流转</button>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="user-avatar">👨‍🍳</div>
+                <div class="meituan-logo">仟佰味·餐饮系统</div>
             </div>
         </div>
-        <div class="header-right">
-            <div class="header-icon">🔍</div>
-            <div class="header-icon">🧹</div>
-            <div class="header-icon">⚙️</div>
-            <div class="header-icon">❓</div>
-            <div class="user-avatar">👨‍🍳</div>
-            <div class="meituan-logo">仟佰味·餐饮系统</div>
-        </div>
-    </div>
 
-    <!-- 筛选工具栏 -->
-    <div class="filter-toolbar">
-        <div class="filter-group">
-            <button class="filter-btn active">全部</button>
-            <button class="filter-btn">堂食</button>
-            <button class="filter-btn">外卖</button>
-            <button class="filter-btn">打包</button>
+        <div class="filter-toolbar">
+            <div class="filter-group">
+                <button class="filter-btn active">待接单</button>
+                <button class="filter-btn">已接单</button>
+                <button class="filter-btn">制作中</button>
+                <button class="filter-btn">待上菜</button>
+                <button class="filter-btn">已上菜</button>
+            </div>
         </div>
-        <div class="divider"></div>
-        <div class="filter-group">
-            <button class="filter-btn">全部</button>
-            <button class="filter-btn">催菜</button>
-        </div>
-        <div class="divider"></div>
-        <div class="filter-group">
-            <button class="filter-btn">下单时间 ▼</button>
-        </div>
-        <div class="divider"></div>
-        <div class="filter-group">
-            <button class="filter-btn">菜品</button>
-            <button class="filter-btn">订单</button>
-        </div>
-        <div style="flex: 1;"></div>
-        <button class="filter-btn">收起 ↑</button>
-    </div>
 
-    <div class="main-container">
-        <!-- 订单卡片区域 -->
-        <div id="orders" class="orders-grid">
-            <!-- 动态填充订单卡片 -->
-        </div>
-        
+        <div class="main-container">
+            <div id="orders" class="orders-grid">
+                <div v-if="loading" style="text-align:center;padding:30px;color:#666;">订单加载中...</div>
+                <div v-else-if="errorMessage" style="text-align:center;padding:30px;color:#d32f2f;" v-text="errorMessage"></div>
+                <div v-else-if="orders.length === 0" style="text-align:center;padding:30px;color:#999;">暂无待处理订单</div>
 
-                <!-- 底部填空区域 -->
-                <div style="height:60px"></div>
-                <!-- 底部导航栏 -->
-                <div class="BottomNavBar NavBar row fixed-bottom border-top"
-                    style="height:80px;background-color:#f7f7f7;height:60px;">
-                    <div class="col-5 m-auto"></div>
-                    <div class="col-4 m-auto">
-                        <div class="row">
-                            <div class="col">
-                                <a href="/">
-                                    <button class="btn btn-success btn-block">返 回</button>
-                                </a>
+                <div v-for="(tableOrders, tableName) in groupedOrders" :key="tableName" class="lane-section">
+                    <div class="lane-header">
+                        <span class="lane-title" v-text="tableName"></span>
+                    </div>
+                    <div class="food-grid">
+                        <div
+                            v-for="order in tableOrders"
+                            :key="order.orderID_id + '-' + order.foodID_id"
+                            class="food-card"
+                        >
+                            <div class="food-card-header">
+                                <span class="food-order-num" v-text="'订单 #' + order.orderID_id"></span>
+                                <span class="badge ml-2" :class="getStatusMeta(order.status).class" v-text="getStatusMeta(order.status).text"></span>
                             </div>
-                            <div class="col mr-3">
+                            <div class="food-card-body">
+                                <div class="food-name" v-text="order.food_name"></div>
+                            </div>
+                            <div class="food-card-footer">
+                                <span class="food-time" v-text="'数量 ' + order.food_amount + ' 份'"></span>
+                            </div>
+                            <div style="padding:10px;text-align:center;">
+                                <button
+                                    v-if="getAction(order)"
+                                    class="btn btn-primary btn-sm"
+                                    style="width:100%;"
+                                    @click="runAction(order)"
+                                    v-text="getAction(order).label"
+                                ></button>
+                                <button
+                                    v-else
+                                    class="btn btn-secondary btn-sm"
+                                    style="width:100%;cursor:default;"
+                                >无可执行操作</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    </div>
 
     <!-- 底部导航栏 -->
     <div class="bottom-nav">
@@ -394,9 +389,8 @@
             </div>
         </div>
     </div>
+    </div>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <script src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js"></script>
-    <script src="{% static 'js/csrf.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/bs4.pop.css' %}">
     <script src="{% static 'js/bs4.pop.js' %}"></script>
     <script src="{% static 'js/vue/food-supplier-app.js' %}"></script>

@@ -5,158 +5,133 @@ window.initFoodSupplierApp = function () {
         data() {
             return {
                 orders: [],
+                loading: false,
+                errorMessage: "",
                 statusMap: {
-                    0: { text: '待接单', class: 'status-waiting' },
-                    1: { text: '制作中', class: 'status-cooking' },
-                    2: { text: '待上菜', class: 'status-ready' },
-                    3: { text: '已上菜', class: 'status-delivered' }
-                }
+                    0: { text: "待接单", class: "badge-danger" },
+                    1: { text: "已接单", class: "badge-warning" },
+                    2: { text: "制作中", class: "badge-primary" },
+                    3: { text: "待上菜", class: "badge-info" },
+                    4: { text: "已上菜", class: "badge-success" },
+                    5: { text: "已取消", class: "badge-secondary" },
+                },
             };
+        },
+        computed: {
+            groupedOrders() {
+                const grouped = {};
+                this.orders.forEach((order) => {
+                    const tableLabel = `桌号 ${order.table_id}`;
+                    if (!grouped[tableLabel]) {
+                        grouped[tableLabel] = [];
+                    }
+                    grouped[tableLabel].push(order);
+                });
+                return grouped;
+            },
         },
         mounted() {
             this.updateOrders();
             this.orderTimer = setInterval(() => this.updateOrders(), 8000);
-            this.bindCardClickEvents();
         },
         beforeUnmount() {
             clearInterval(this.orderTimer);
         },
         methods: {
-            updateOrders() {
-                $.post('/manage/serving_order_item_list', data => {
-                    try {
-                        const orders = JSON.parse(data);
-                        this.orders = orders;
-                        this.renderOrderCards(orders);
-                        this.bindCardClickEvents();
-                    } catch (error) {
-                        console.error('订单加载失败:', error);
-                        $('#orders').html('<div style="text-align:center;padding:50px;color:#999;"><h3>数据加载失败</h3><p>错误信息：' + error.message + '</p></div>');
+            getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== "") {
+                    const cookies = document.cookie.split(";");
+                    for (let i = 0; i < cookies.length; i += 1) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === `${name}=`) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
                     }
-                }).fail((xhr, status, error) => {
-                    console.error('请求失败:', error);
-                    $('#orders').html('<div style="text-align:center;padding:50px;color:#999;"><h3>加载失败，请刷新页面</h3><p>错误：' + error + '</p></div>');
-                });
+                }
+                return cookieValue;
             },
-            renderOrderCards(orders) {
-                const ordersContainer = $('#orders');
-                ordersContainer.empty();
+            getStatusMeta(status) {
+                return this.statusMap[status] || { text: "未知", class: "status-unknown" };
+            },
+            getAction(order) {
+                const actions = {
+                    0: { label: "接单", endpoint: "/cook", payload: { action: "accept_order" } },
+                    1: { label: "开始制作", endpoint: "/cook", payload: { action: "start_cooking" } },
+                    2: { label: "制作完成", endpoint: "/cook", payload: { action: "mark_ready" } },
+                    3: { label: "上菜", endpoint: "/delive_food", payload: {} },
+                };
+                return actions[order.status] || null;
+            },
+            async updateOrders() {
+                this.loading = true;
+                this.errorMessage = "";
+                const token = this.getCookie("csrftoken");
+                try {
+                    const response = await fetch("/manage/serving_order_item_list", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": token,
+                            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                        },
+                        body: "",
+                    });
+                    if (!response.ok) {
+                        throw new Error("订单查询失败");
+                    }
+                    this.orders = await response.json();
+                } catch (error) {
+                    this.errorMessage = error.message || "加载失败";
+                    this.orders = [];
+                } finally {
+                    this.loading = false;
+                }
+            },
+            async updateOrderStatus(order, action) {
+                const token = this.getCookie("csrftoken");
+                const payload = new URLSearchParams({
+                    order_id: String(order.orderID_id),
+                    food_id: String(order.foodID_id),
+                    ...action.payload,
+                });
+                const response = await fetch(action.endpoint, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": token,
+                        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                    },
+                    body: payload,
+                });
 
-                if (!orders || orders.length === 0) {
-                    ordersContainer.html('<div style="text-align:center;padding:50px;color:#999;"><h3>暂无订单</h3></div>');
+                const data = await response.json();
+                if (!response.ok || data.status !== "OK") {
+                    throw new Error(data.message || "状态更新失败");
+                }
+                await this.updateOrders();
+            },
+            async runAction(order) {
+                const action = this.getAction(order);
+                if (!action) {
                     return;
                 }
-
-                const groupedOrders = {};
-                orders.forEach(order => {
-                    const laneKey = '桌号' + order.table_id;
-                    if (!groupedOrders[laneKey]) {
-                        groupedOrders[laneKey] = [];
+                try {
+                    await this.updateOrderStatus(order, action);
+                    if (window.bs4pop) {
+                        bs4pop.notice(`操作成功：${action.label}`, { type: "success" });
                     }
-                    groupedOrders[laneKey].push(order);
-                });
-
-                Object.keys(groupedOrders).forEach(laneName => {
-                    const laneOrders = groupedOrders[laneName];
-                    const laneSection = $('<div class="lane-section"></div>');
-                    const laneHeader = $('<div class="lane-header"><span class="lane-title">' + laneName + '(' + laneOrders.length + ')</span></div>');
-                    const foodGrid = $('<div class="food-grid"></div>');
-
-                    laneOrders.forEach(order => {
-                        const combinedNum = order.table_id ? order.table_id + '+' + order.orderID_id : String(order.orderID_id);
-                        const statusInfo = this.statusMap[order.status] || { text: '未知', class: 'status-unknown' };
-                        const statusBg = order.status === 0 ? 'badge-danger' : (order.status === 1 ? 'badge-warning' : 'badge-info');
-                        
-                        const foodCard = $('<div class="food-card" data-order-id="' + order.orderID_id + '" data-food-id="' + order.foodID_id + '" data-status="' + order.status + '">' +
-                            '<div class="food-card-header">' +
-                            '<span class="food-order-num">' + combinedNum + '</span>' +
-                            '<span class="badge ' + statusBg + '" style="margin-left:10px;">' + statusInfo.text + '</span>' +
-                            '</div>' +
-                            '<div class="food-card-body"><div class="food-name">' + order.food_name + '</div></div>' +
-                            '<div class="food-card-footer">' +
-                            '<span class="food-time">⏱ 0 分钟</span>' +
-                            '<div class="food-quantity-wrapper">' +
-                            '<span class="quantity-value">' + order.food_amount + '</span>' +
-                            '<span class="quantity-unit">份</span>' +
-                            '</div>' +
-                            '</div>' +
-                            '<div style="padding:10px;text-align:center;">' +
-                            (order.status === 0 ? '<button class="btn btn-primary btn-sm accept-order-btn" style="width:100%;">接单</button>' :
-                             order.status === 1 ? '<button class="btn btn-success btn-sm ready-order-btn" style="width:100%;">已准备好</button>' :
-                             '<button class="btn btn-secondary btn-sm" style="width:100%;cursor:default;">已处理</button>') +
-                            '</div>' +
-                            '</div>');
-                        foodGrid.append(foodCard);
-                    });
-
-                    laneSection.append(laneHeader);
-                    laneSection.append(foodGrid);
-                    ordersContainer.append(laneSection);
-                });
-            },
-            bindCardClickEvents() {
-                const self = this;
-                
-                // 接单按钮
-                $('.accept-order-btn').off('click').on('click', function (e) {
-                    e.stopPropagation();
-                    const orderId = $(this).closest('.food-card').attr('data-order-id');
-                    const foodId = $(this).closest('.food-card').attr('data-food-id');
-                    self.acceptOrder(orderId, foodId, $(this));
-                });
-
-                // 已准备好按钮
-                $('.ready-order-btn').off('click').on('click', function (e) {
-                    e.stopPropagation();
-                    const orderId = $(this).closest('.food-card').attr('data-order-id');
-                    const foodId = $(this).closest('.food-card').attr('data-food-id');
-                    self.readyOrder(orderId, foodId, $(this));
-                });
-            },
-            acceptOrder(orderId, foodId, button) {
-                const self = this;
-                $.post('/cook', {
-                    OP: 'take_order',
-                    order_id: orderId,
-                    food_id: foodId
-                }, data => {
-                    const response = JSON.parse(data);
-                    if (response.status === 'OK') {
-                        bs4pop.notice('已接单！', { type: 'success' });
-                        self.updateOrders();
-                    } else {
-                        bs4pop.notice('接单失败！', { type: 'danger' });
+                } catch (error) {
+                    if (window.bs4pop) {
+                        bs4pop.notice(error.message || "操作失败", { type: "danger" });
                     }
-                }).fail(error => {
-                    bs4pop.notice('接单请求失败！', { type: 'danger' });
-                    console.error('Error:', error);
-                });
+                }
             },
-            readyOrder(orderId, foodId, button) {
-                const self = this;
-                $.post('/cook', {
-                    OP: 'ready_serve',
-                    order_id: orderId,
-                    food_id: foodId
-                }, data => {
-                    const response = JSON.parse(data);
-                    if (response.status === 'OK') {
-                        bs4pop.notice('已标记为可上菜！', { type: 'success' });
-                        self.updateOrders();
-                    } else {
-                        bs4pop.notice('标记失败！', { type: 'danger' });
-                    }
-                }).fail(error => {
-                    bs4pop.notice('标记请求失败！', { type: 'danger' });
-                    console.error('Error:', error);
-                });
-            }
         },
-    }).mount('#food-supplier-app');
+    }).mount("#food-supplier-app");
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    if (window.Vue && typeof window.initFoodSupplierApp === 'function') {
+document.addEventListener("DOMContentLoaded", () => {
+    if (window.Vue && typeof window.initFoodSupplierApp === "function") {
         window.initFoodSupplierApp();
     }
 });
