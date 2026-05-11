@@ -1,0 +1,228 @@
+.serving {
+    background-color: rgba(231, 255, 224, 0.781);
+    color: #529c3f;
+    transition: all 200ms ease-in-out;
+}
+
+.serving:hover {
+    background-color: rgb(110, 196, 93);
+    color: #ffffff;
+}
+
+.waiting {
+    background-color: rgba(255, 224, 224, 0.781);
+    color: #9c3f3f;
+    transition: all 200ms ease-in-out;
+}
+
+.waiting:hover {
+    background-color: rgba(239, 108, 108, 0.781);
+    color: #ffffff;
+}
+
+#entry-button-group button {
+    height: 50px;
+}
+
+a {
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+#table-info-table tr:hover {
+    cursor: pointer;
+}
+
+
+.badge:hover {
+    cursor: pointer;
+}
+
+
+
+.staff-opt-btn {
+    width: 80px;
+    /* height: 30px;
+    line-height: 18px; */
+}
+
+
+.food-item {
+    height: 50px;
+    line-height: 50px;
+}
+
+.food-item button {
+    height: 50px;
+}
+
+/* 后台模糊美食背景（仅管理页） */
+body.page-manage {
+    position: relative;
+    overflow-x: hidden;
+    background: #eef2f7 !important;
+}
+
+body.page-manage::before {
+    content: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image:
+        linear-gradient(rgba(245, 248, 252, 0.72), rgba(245, 248, 252, 0.72)),
+        url("https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1920&q=80");
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px) saturate(1.1);
+    transform: scale(1.05);
+}
+
+body.page-manage .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1220px;
+    border-radius: 18px;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+}
+
+body.page-manage h1 {
+    font-size: 40px;
+    color: #253247 !important;
+}
+
+/* 顶部工具条（参考订单详情页类型） */
+.manage-head-tools {
+    background: #f6f8fc;
+    border: 1px solid #e3e9f2;
+    border-radius: 14px;
+    padding: 10px 12px;
+}
+
+.manage-search-wrap {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #dbe3ef;
+    border-radius: 22px;
+    height: 44px;
+    padding: 0 12px;
+}
+
+.manage-search-icon {
+    margin-right: 8px;
+    color: #8aa0bd;
+}
+
+.manage-search-input {
+    border: 0;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    color: #3b4a63;
+}
+
+.manage-search-input::placeholder {
+    color: #98a7bd;
+}
+
+.manage-head-btn {
+    min-width: 100px;
+    height: 44px;
+    border-radius: 22px !important;
+    background: linear-gradient(135deg, #35d388 0%, #22c4a0 100%) !important;
+    color: #fff !important;
+    font-weight: 800;
+}
+
+/* 管理页按钮改为更克制的配色 */
+body.page-manage .btn-outline-primary,
+body.page-manage .btn-outline-danger,
+body.page-manage .btn-outline-success {
+    background: #fff !important;
+    border: 1px solid #d5deea !important;
+    color: #4c5f7a !important;
+    box-shadow: none !important;
+}
+
+body.page-manage .btn-outline-primary:hover,
+body.page-manage .btn-outline-danger:hover,
+body.page-manage .btn-outline-success:hover {
+    background: linear-gradient(135deg, #56a0ff 0%, #57c7ff 100%) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+}
+
+body.page-manage #entry-button-group button {
+    height: 46px;
+    border-radius: 10px !important;
+    font-size: 15px;
+}
+
+body.page-manage #table-info-table {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+body.page-manage #table-info-table th {
+    background: #f3f6fb;
+    color: #4d5e77;
+    border-top: 0;
+}
+
+body.page-manage #table-info-table td {
+    color: #3f5068;
+}
+
+/* 后台轮播图 */
+.manage-carousel {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+}
+
+.manage-carousel-banner {
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    padding: 20px 30px;
+}
+
+.manage-carousel-banner.slide-1 {
+    background: linear-gradient(135deg, #4f8cff 0%, #7b6dff 52%, #42d8c2 100%);
+}
+
+.manage-carousel-banner.slide-2 {
+    background: linear-gradient(135deg, #ff5f6d 0%, #ff9966 50%, #ffc371 100%);
+}
+
+.manage-carousel-banner.slide-3 {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 48%, #6dd5ed 100%);
+}
+
+.manage-carousel-text {
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.manage-carousel-text h3 {
+    font-size: 30px;
+    margin-bottom: 10px;
+    font-weight: 800;
+}
+
+.manage-carousel-text p {
+    font-size: 18px;
+    margin: 0;
+    opacity: 0.95;
+    font-weight: 600;
+}
+
+.manage-carousel .carousel-indicators li {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}

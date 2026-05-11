@@ -1,0 +1,236 @@
+/* 主容器 */
+.main-container {
+    padding: 0 20px 20px;
+}
+/* 订单容器 */
+#orders {
+    margin-top: 20px;
+}
+/* 泳道容器 */
+.lane-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* 泳道区域 */
+.lane-section {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+/* 泳道标题 */
+.lane-header {
+    background: linear-gradient(to right, #b0b0b0 0%, #a0a0a0 100%);
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.lane-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: 1px;
+}
+
+/* 菜品网格 */
+.food-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+/* 菜品卡片 */
+.food-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.food-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: #00c853;
+}
+
+.food-card-header {
+    background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%);
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e0e0e0;
+    min-height: 40px;
+}
+
+.food-order-num {
+    font-weight: 700;
+    color: #1a1a1a;
+    font-size: 0.95rem;
+    background: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.food-detail-btn {
+    color: #999;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.food-detail-btn:hover {
+    color: #00c853;
+    background: rgba(0, 200, 83, 0.1);
+}
+
+.food-card-body {
+    padding: 15px 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 60px;
+}
+
+.food-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    margin-bottom: 5px;
+}
+
+.food-spec {
+    font-size: 0.85rem;
+    color: #999;
+    font-style: italic;
+    margin-top: 5px;
+    padding-left: 5px;
+    border-left: 2px solid #00c853;
+}
+
+.food-card-footer {
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 40px;
+}
+
+.food-time {
+    color: #666;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.food-time::before {
+    content: '⏱';
+    font-size: 1rem;
+}
+
+.food-quantity-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: white;
+    padding: 4px 10px;
+    border-radius: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.quantity-value {
+    color: #ff6b35;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.quantity-unit {
+    color: #999;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.quantity-arrow {
+    color: #ff6b35;
+    font-size: 0.65rem;
+    margin-left: 3px;
+    transition: transform 0.3s;
+}
+
+.food-card:hover .quantity-arrow {
+    transform: translateY(2px);
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .lane-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .food-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .food-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .main-container {
+        padding: 0 15px 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .food-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .food-card-header {
+        padding: 8px 12px;
+    }
+
+    .food-card-body {
+        padding: 12px;
+    }
+
+    .food-card-footer {
+        padding: 8px 12px;
+    }
+
+    .food-name {
+        font-size: 0.95rem;
+    }
+
+    .lane-header {
+        padding: 10px 15px;
+    }
+
+    .lane-title {
+        font-size: 1rem;
+    }
+}

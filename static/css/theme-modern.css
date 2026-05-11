@@ -1,0 +1,960 @@
+/* Unified visual polish without changing page content */
+:root {
+    --theme-bg: #f4f6f7;
+    --theme-card: #ffffff;
+    --theme-border: #e9ecef;
+    --theme-text: #1f2a37;
+    --theme-muted: #6b7280;
+    --theme-primary: #18b65b;
+    --theme-primary-dark: #10914a;
+    --theme-dark: #121417;
+}
+
+body {
+    color: var(--theme-text);
+}
+
+/* Home */
+body.page-home {
+    background: linear-gradient(180deg, #f6faf8 0%, #edf2f6 100%) !important;
+}
+
+body.page-home .main-container {
+    background: rgba(255, 255, 255, 0.96) !important;
+    box-shadow: none !important;
+}
+
+body.page-home .logo-section {
+    background: linear-gradient(135deg, #1fbf66 0%, #12a655 100%) !important;
+    border-radius: 18px !important;
+}
+
+body.page-home .footer {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
+}
+
+/* Order home (mobile menu style) */
+body.page-order-home {
+    background: var(--theme-bg) !important;
+}
+
+body.page-order-home .restaurant-header {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.86) 0%, #ffffff 58%) !important;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08) !important;
+    border-radius: 0 0 18px 18px !important;
+    border-bottom: 1px solid #ebeff3;
+    padding: 14px 14px 10px !important;
+}
+
+body.page-order-home .restaurant-name {
+    color: #111827 !important;
+    text-shadow: none !important;
+}
+
+body.page-order-home .restaurant-slogan {
+    color: var(--theme-muted) !important;
+    font-size: 13px !important;
+}
+
+body.page-order-home .restaurant-logo {
+    width: 54px !important;
+    height: 54px !important;
+    border-radius: 12px !important;
+}
+
+body.page-order-home .search-input {
+    background: #f6f8fa !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 20px !important;
+    height: 38px !important;
+    font-size: 14px !important;
+}
+
+body.page-order-home .manage-btn,
+body.page-order-home #OrderSubmit {
+    background: linear-gradient(135deg, #1ec56d 0%, #14a75b 100%) !important;
+    box-shadow: 0 10px 18px rgba(16, 145, 74, 0.25) !important;
+}
+
+body.page-order-home .main-container {
+    background: #ffffff !important;
+    box-shadow: none !important;
+    border: 1px solid #ecf0f3;
+    border-radius: 14px !important;
+    margin-top: 10px !important;
+    padding: 10px !important;
+}
+
+body.page-order-home .category-sidebar {
+    background: #eff3f4 !important;
+    border: 1px solid var(--theme-border);
+    border-radius: 12px !important;
+    padding: 8px !important;
+    min-width: 165px;
+}
+
+body.page-order-home .category-item {
+    color: #334155 !important;
+    font-weight: 600 !important;
+    border-radius: 9px !important;
+    padding: 11px 10px !important;
+    margin-bottom: 6px !important;
+    font-size: 16px !important;
+}
+
+body.page-order-home .category-item.active {
+    background: #ffffff !important;
+    color: #12914a !important;
+    border-left: 3px solid #1ab55d;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05) !important;
+}
+
+body.page-order-home .food-list-container {
+    background: #ffffff !important;
+    border: 1px solid var(--theme-border);
+    border-radius: 12px !important;
+    padding: 12px !important;
+}
+
+body.page-order-home .food-section-title {
+    color: #101827 !important;
+    border-left-color: #17b45b !important;
+    font-size: 30px !important;
+    margin: 8px 0 10px !important;
+}
+
+body.page-order-home .food-section-title::before {
+    margin-right: 8px !important;
+    font-size: 24px !important;
+}
+
+body.page-order-home .food-item {
+    border: 1px solid #edf1f4 !important;
+    box-shadow: none !important;
+    border-radius: 12px !important;
+    padding: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+body.page-order-home .food-item:hover {
+    border-color: #d9ece0 !important;
+    box-shadow: 0 6px 14px rgba(16, 145, 74, 0.1) !important;
+    transform: translateY(-2px) !important;
+}
+
+body.page-order-home .food-image {
+    width: 105px !important;
+    height: 88px !important;
+    border-radius: 10px !important;
+    margin-right: 12px !important;
+}
+
+body.page-order-home .food-title {
+    font-size: 38px !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+}
+
+body.page-order-home .food-details {
+    margin-top: 6px;
+}
+
+body.page-order-home .food-stock {
+    background: #f2f4f7 !important;
+    color: #667085 !important;
+    font-size: 12px !important;
+    padding: 2px 8px !important;
+}
+
+body.page-order-home .food-price,
+body.page-order-home .food-price::before {
+    color: #0f172a !important;
+}
+
+body.page-order-home .add-food-btn {
+    background: linear-gradient(135deg, #1ec56d 0%, #14a75b 100%) !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px;
+    font-size: 26px !important;
+    line-height: 1 !important;
+    margin-left: 10px !important;
+    box-shadow: 0 6px 12px rgba(22, 168, 90, 0.25) !important;
+}
+
+body.page-order-home .add-food-btn:hover {
+    transform: scale(1.08) !important;
+}
+
+body.page-order-home .cart-float-btn {
+    background: #ffffff !important;
+    color: #111827 !important;
+    left: 16px !important;
+    right: auto !important;
+    width: 58px !important;
+    height: 58px !important;
+    border: 1px solid #ebeff3 !important;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12) !important;
+}
+
+body.page-order-home .cart-badge {
+    background: #1db55f !important;
+}
+
+body.page-order-home .order-sidebar {
+    background: #f7faf9 !important;
+}
+
+body.page-order-home .order-header {
+    background: #111827 !important;
+}
+
+body.page-order-home .bottom-nav {
+    background: #ffffff !important;
+    border-top: 1px solid var(--theme-border);
+    box-shadow: 0 -8px 20px rgba(15, 23, 42, 0.08) !important;
+    border-radius: 0 !important;
+    padding: 8px 0 !important;
+}
+
+body.page-order-home .bottom-nav .nav-item {
+    color: #111827 !important;
+    border-radius: 10px !important;
+    min-width: 76px;
+}
+
+body.page-order-home .bottom-nav .nav-item.active {
+    background: #eefaf2 !important;
+    color: #0d8f49 !important;
+}
+
+body.page-order-home .bottom-nav .nav-icon {
+    font-size: 22px !important;
+}
+
+@media (max-width: 768px) {
+    body.page-order-home .main-container {
+        padding: 8px !important;
+        border-radius: 10px !important;
+    }
+
+    body.page-order-home .food-title {
+        font-size: 32px !important;
+    }
+}
+
+/* Kitchen board */
+body.page-food-supplier {
+    background: #edf0f3 !important;
+}
+
+body.page-food-supplier .top-header {
+    background: linear-gradient(90deg, #0f1115 0%, #1b1f28 100%) !important;
+    border-bottom: 1px solid #2d3543;
+    min-height: 64px;
+}
+
+body.page-food-supplier .status-tab.active,
+body.page-food-supplier .filter-btn.primary {
+    background: #17b45b !important;
+    border-color: #17b45b !important;
+}
+
+body.page-food-supplier .filter-toolbar {
+    border: 1px solid #d7dde5;
+    border-radius: 10px !important;
+    padding: 10px 12px !important;
+    margin-top: 10px !important;
+}
+
+body.page-food-supplier #orders.orders-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(260px, 1fr));
+    gap: 10px;
+}
+
+body.page-food-supplier .lane-section {
+    background: #ebeff4 !important;
+    border: 1px solid #d4dbe5;
+    border-radius: 6px !important;
+    padding: 6px !important;
+    margin-bottom: 0 !important;
+}
+
+body.page-food-supplier .lane-header {
+    background: #d0d6df !important;
+    border-radius: 6px !important;
+    padding: 7px 10px !important;
+    margin-bottom: 6px !important;
+    box-shadow: none !important;
+}
+
+body.page-food-supplier .lane-title {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0 !important;
+    color: #1f2937 !important;
+}
+
+body.page-food-supplier .food-card {
+    border: 1px solid #d4dbe5 !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+}
+
+body.page-food-supplier .food-card:hover {
+    border-color: #a2afc0 !important;
+    transform: none !important;
+}
+
+body.page-food-supplier .food-card-header,
+body.page-food-supplier .food-card-footer {
+    min-height: 28px !important;
+    padding: 5px 8px !important;
+    background: #f5f7fa !important;
+}
+
+body.page-food-supplier .food-order-num {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+body.page-food-supplier .food-card-body {
+    min-height: 44px !important;
+    padding: 7px 8px !important;
+}
+
+body.page-food-supplier .food-name {
+    font-size: 30px !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    color: #111827 !important;
+}
+
+body.page-food-supplier .food-time,
+body.page-food-supplier .food-detail-btn {
+    color: #6b7280 !important;
+    font-size: 14px !important;
+}
+
+body.page-food-supplier .quantity-value {
+    font-size: 16px !important;
+    color: #5f6b7d !important;
+}
+
+body.page-food-supplier .quantity-unit {
+    font-size: 13px !important;
+    color: #7b8797 !important;
+}
+
+body.page-food-supplier .quantity-arrow {
+    font-size: 11px !important;
+    color: #8b97a8 !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+body.page-food-supplier .food-grid {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+}
+
+@media (max-width: 1100px) {
+    body.page-food-supplier #orders.orders-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    body.page-food-supplier #orders.orders-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+body.page-food-supplier .bottom-nav {
+    background: #111827 !important;
+    border-top: 0 !important;
+}
+
+/* Kitchen page final neutral overrides (match provided screenshot style) */
+body.page-food-supplier .filter-btn,
+body.page-food-supplier .status-tab {
+    color: #f8fafc !important;
+    background: #232937 !important;
+    border: 1px solid #343d4f !important;
+    box-shadow: none !important;
+    font-weight: 700 !important;
+}
+
+body.page-food-supplier .filter-btn.active,
+body.page-food-supplier .status-tab.active {
+    color: #111827 !important;
+    background: #ffffff !important;
+    border-color: #ffffff !important;
+}
+
+body.page-food-supplier .filter-btn:hover,
+body.page-food-supplier .status-tab:hover {
+    color: #ffffff !important;
+}
+
+body.page-food-supplier .header-icon {
+    background: #2a3140 !important;
+    color: #d1d5db !important;
+    border: 1px solid #3a4356 !important;
+}
+
+body.page-food-supplier .meituan-logo {
+    background: #ffd43b !important;
+    color: #111827 !important;
+    border-radius: 8px !important;
+    font-weight: 800 !important;
+}
+
+/* Backoffice + lists */
+body.page-manage,
+body.page-orders,
+body.page-staffs,
+body.page-tables,
+body.page-foods,
+body.page-query-order,
+body.page-checkout,
+body.page-signin,
+body.page-order-signin,
+body.page-signup,
+body.page-review,
+body.page-review-list {
+    background: linear-gradient(180deg, #f6faf8 0%, #eef2f7 100%) !important;
+}
+
+body.page-manage .container,
+body.page-orders .container,
+body.page-staffs .container,
+body.page-tables .container,
+body.page-foods .container,
+body.page-query-order .container,
+body.page-checkout .container,
+body.page-signin .container,
+body.page-signup .container,
+body.page-review .review-container,
+body.page-review-list .main-container {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+    padding: 20px;
+}
+
+body.page-manage .btn-success,
+body.page-orders .btn-success,
+body.page-staffs .btn-success,
+body.page-tables .btn-success,
+body.page-foods .btn-success,
+body.page-query-order .btn-success,
+body.page-checkout .btn-success,
+body.page-signin .btn-primary,
+body.page-signup .btn-primary,
+body.page-review .btn-primary,
+body.page-review-list .refresh-btn {
+    background: linear-gradient(135deg, #1ec56d 0%, #14a75b 100%) !important;
+    border-color: #14a75b !important;
+}
+
+body.page-manage .table,
+body.page-orders .table,
+body.page-staffs .table,
+body.page-tables .table,
+body.page-foods .table {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+body.page-manage .BottomNavBar,
+body.page-orders .BottomNavBar,
+body.page-staffs .BottomNavBar,
+body.page-tables .BottomNavBar,
+body.page-foods .BottomNavBar,
+body.page-query-order .BottomNavBar,
+body.page-checkout .BottomNavBar {
+    background: #ffffff !important;
+    box-shadow: 0 -8px 16px rgba(15, 23, 42, 0.08);
+}
+
+/* Review pages */
+body.page-review .review-container,
+body.page-review-list .main-container {
+    border: 1px solid #e6edf2;
+}
+
+body.page-review .star-rating input[type="radio"]:checked ~ label:before,
+body.page-review .star-rating input[type="radio"]:hover ~ label:before,
+body.page-review .star-rating label:hover ~ label:before {
+    color: #f5b301 !important;
+}
+
+/* ---------- Vivid multi-color refinement ---------- */
+body.page-home,
+body.page-order-home,
+body.page-food-supplier,
+body.page-manage,
+body.page-orders,
+body.page-staffs,
+body.page-tables,
+body.page-foods,
+body.page-query-order,
+body.page-checkout,
+body.page-signin,
+body.page-order-signin,
+body.page-signup,
+body.page-review,
+body.page-review-list {
+    background-image:
+        radial-gradient(circle at 8% 12%, rgba(255, 99, 132, 0.16), transparent 32%),
+        radial-gradient(circle at 90% 18%, rgba(54, 162, 235, 0.16), transparent 34%),
+        radial-gradient(circle at 80% 82%, rgba(255, 206, 86, 0.14), transparent 32%),
+        linear-gradient(140deg, #f7fbff 0%, #f2f5ff 36%, #f8f3ff 68%, #fff5f1 100%) !important;
+}
+
+body.page-home .main-btn-card,
+body.page-order-home .food-item,
+body.page-food-supplier .food-card,
+body.page-manage .table,
+body.page-orders .table,
+body.page-staffs .table,
+body.page-tables .table,
+body.page-foods .table,
+body.page-review .review-container,
+body.page-review-list .main-container {
+    box-shadow:
+        0 10px 20px rgba(80, 70, 220, 0.08),
+        0 4px 10px rgba(0, 180, 150, 0.06) !important;
+}
+
+body.page-home .logo-section {
+    background: linear-gradient(135deg, #ff6cab 0%, #7366ff 45%, #3ae5c0 100%) !important;
+}
+
+body.page-home .main-btn-card.btn-order::before {
+    background: linear-gradient(135deg, #45cafc 0%, #6a67ff 100%) !important;
+}
+
+body.page-home .main-btn-card.btn-kitchen::before {
+    background: linear-gradient(135deg, #ff9a44 0%, #ff4f81 100%) !important;
+}
+
+body.page-home .main-btn-card.btn-cashier::before {
+    background: linear-gradient(135deg, #44e0b2 0%, #1d9bf0 100%) !important;
+}
+
+body.page-home .main-btn-card.btn-review::before {
+    background: linear-gradient(135deg, #ffd166 0%, #ff6b6b 100%) !important;
+}
+
+body.page-home .footer {
+    background: linear-gradient(135deg, #2a2f45 0%, #4b2f80 55%, #2a6f8e 100%) !important;
+}
+
+body.page-order-home .restaurant-header {
+    background:
+        linear-gradient(175deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 253, 255, 0.96) 58%),
+        linear-gradient(135deg, #ff7eb3 0%, #65a8ff 55%, #53e0c6 100%) !important;
+}
+
+body.page-order-home .manage-btn,
+body.page-order-home #OrderSubmit {
+    background: linear-gradient(135deg, #29d17d 0%, #14b8a6 45%, #2f86ff 100%) !important;
+    box-shadow: 0 10px 20px rgba(20, 140, 220, 0.24) !important;
+}
+
+body.page-order-home .category-sidebar {
+    background: linear-gradient(180deg, #f0fbf5 0%, #eef6ff 56%, #f8f2ff 100%) !important;
+}
+
+body.page-order-home .category-item.active {
+    background: linear-gradient(90deg, rgba(34, 197, 94, 0.12), rgba(59, 130, 246, 0.1)) !important;
+    border-left: 3px solid #2db67c;
+}
+
+body.page-order-home .food-section-title {
+    background: linear-gradient(90deg, #198f58 0%, #1e97c8 45%, #705df2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.page-order-home .add-food-btn {
+    background: linear-gradient(145deg, #2ddf74 0%, #17b5b0 45%, #2f86ff 100%) !important;
+}
+
+body.page-order-home .cart-badge {
+    background: linear-gradient(135deg, #ff4f81 0%, #ff7a18 100%) !important;
+}
+
+body.page-order-home .bottom-nav .nav-item.active {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.14), rgba(59, 130, 246, 0.14)) !important;
+}
+
+body.page-food-supplier .top-header {
+    background: linear-gradient(90deg, #0f1115 0%, #2f274f 50%, #1f3a58 100%) !important;
+}
+
+body.page-food-supplier .status-tab.active,
+body.page-food-supplier .filter-btn.primary {
+    background: linear-gradient(135deg, #24d179 0%, #17b5b0 55%, #2f86ff 100%) !important;
+    border-color: transparent !important;
+}
+
+body.page-food-supplier .lane-header {
+    background: linear-gradient(90deg, #ced6e3 0%, #d9d3ea 52%, #d2e0ef 100%) !important;
+}
+
+body.page-food-supplier .food-order-num {
+    color: #3b3f67 !important;
+}
+
+body.page-food-supplier .quantity-value {
+    color: #ff5b6e !important;
+}
+
+body.page-food-supplier .quantity-arrow {
+    color: #2f86ff !important;
+}
+
+body.page-manage .container,
+body.page-orders .container,
+body.page-staffs .container,
+body.page-tables .container,
+body.page-foods .container,
+body.page-query-order .container,
+body.page-checkout .container,
+body.page-signin .container,
+body.page-order-signin .order-login-card,
+body.page-signup .container {
+    background-image:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(252, 253, 255, 0.96) 100%),
+        linear-gradient(135deg, rgba(255, 126, 179, 0.1), rgba(101, 168, 255, 0.1), rgba(83, 224, 198, 0.1)) !important;
+    border: 1px solid #e8ebf2;
+}
+
+body.page-manage .btn-outline-primary,
+body.page-manage .btn-outline-danger,
+body.page-manage .btn-outline-success {
+    border-width: 2px !important;
+}
+
+body.page-manage .btn-outline-primary {
+    border-color: #4f8cff !important;
+    color: #4f8cff !important;
+}
+
+body.page-manage .btn-outline-danger {
+    border-color: #ff4f81 !important;
+    color: #ff4f81 !important;
+}
+
+body.page-manage .btn-outline-success {
+    border-color: #24c173 !important;
+    color: #24c173 !important;
+}
+
+body.page-manage .btn-outline-primary:hover,
+body.page-manage .btn-outline-danger:hover,
+body.page-manage .btn-outline-success:hover {
+    color: #fff !important;
+    background: linear-gradient(135deg, #4f8cff 0%, #7a6dff 100%) !important;
+    border-color: transparent !important;
+}
+
+body.page-orders .order-card {
+    border-left: 5px solid transparent !important;
+    border-image: linear-gradient(180deg, #32d27b, #2f86ff, #ff4f81) 1 !important;
+}
+
+body.page-signin .btn-primary,
+body.page-signup .btn-primary,
+body.page-order-signin .btn-success,
+body.page-review .btn-primary,
+body.page-review-list .refresh-btn {
+    background: linear-gradient(135deg, #22c55e 0%, #14b8a6 50%, #3b82f6 100%) !important;
+    border-color: transparent !important;
+}
+
+/* Make register action obvious on sign-in page */
+body.page-signin .signin-register-btn {
+    background: linear-gradient(135deg, #ff4f81 0%, #ff7a18 100%) !important;
+    color: #ffffff !important;
+    border: 0 !important;
+    box-shadow: 0 10px 20px rgba(255, 122, 24, 0.28) !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.4px !important;
+}
+
+body.page-signin .signin-register-btn:hover {
+    filter: brightness(1.03) saturate(1.08);
+    transform: translateY(-1px);
+}
+
+body.page-review .review-container,
+body.page-review-list .main-container {
+    background-image:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0%, rgba(249, 252, 255, 0.98) 100%),
+        radial-gradient(circle at 0% 0%, rgba(255, 126, 179, 0.08), transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(101, 168, 255, 0.08), transparent 40%) !important;
+}
+
+/* ---------- Full color-fill mode for buttons/graphics ---------- */
+button,
+.btn {
+    color: #ffffff !important;
+    border: 0 !important;
+    box-shadow: 0 8px 16px rgba(36, 93, 215, 0.2) !important;
+}
+
+.btn-primary,
+.btn-outline-primary {
+    background: linear-gradient(135deg, #4f8cff 0%, #7b6dff 100%) !important;
+}
+
+.btn-success,
+.btn-outline-success {
+    background: linear-gradient(135deg, #22c55e 0%, #14b8a6 100%) !important;
+}
+
+.btn-danger,
+.btn-outline-danger {
+    background: linear-gradient(135deg, #ff4f81 0%, #ff7a59 100%) !important;
+}
+
+.btn-warning,
+.btn-outline-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #fb7185 100%) !important;
+}
+
+.btn-info,
+.btn-outline-info {
+    background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%) !important;
+}
+
+.btn-secondary,
+.btn-outline-secondary {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
+}
+
+.btn-light,
+.btn-outline-light {
+    background: linear-gradient(135deg, #3bc2ff 0%, #4f8cff 100%) !important;
+}
+
+.btn-dark,
+.btn-outline-dark {
+    background: linear-gradient(135deg, #2b3148 0%, #111827 100%) !important;
+}
+
+button:hover,
+.btn:hover {
+    filter: brightness(1.03) saturate(1.05);
+    transform: translateY(-1px);
+}
+
+/* Icon/shape color fills */
+.nav-icon,
+.category-icon,
+.header-icon,
+.user-avatar,
+.carousel-indicator,
+.cart-badge,
+.badge,
+.quantity-arrow {
+    color: #ffffff !important;
+}
+
+.nav-icon,
+.category-icon,
+.header-icon {
+    background: linear-gradient(135deg, #6f6bff 0%, #2fa3ff 100%);
+    border-radius: 8px;
+    padding: 3px 6px;
+}
+
+.user-avatar {
+    background: linear-gradient(135deg, #ff4f81 0%, #7b6dff 100%) !important;
+}
+
+.cart-badge,
+.badge {
+    background: linear-gradient(135deg, #ff4f81 0%, #ff7a18 100%) !important;
+    border: 0 !important;
+}
+
+.quantity-arrow {
+    background: linear-gradient(135deg, #22c55e 0%, #14b8a6 100%) !important;
+    border-radius: 999px;
+    padding: 1px 6px;
+}
+
+/* Graphic blocks/cards with visible fills */
+.order-item,
+.order-card,
+.review-card,
+.food-card,
+.food-item,
+.lane-header,
+.table-selection,
+.secondary-btn-card,
+.main-btn-card {
+    background-color: #ffffff !important;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 250, 255, 0.98) 100%) !important;
+}
+
+/* ---------- Typography emphasis + visual polish ---------- */
+html, body {
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6,
+.restaurant-name,
+.page-title,
+.order-login-title,
+.system-title {
+    font-weight: 800 !important;
+    letter-spacing: 0.3px;
+    color: #101827 !important;
+}
+
+.restaurant-name {
+    font-size: clamp(28px, 4vw, 42px) !important;
+    line-height: 1.12 !important;
+    text-shadow: 0 2px 8px rgba(20, 24, 38, 0.12) !important;
+}
+
+.restaurant-slogan,
+.review-date,
+.time,
+.info-label,
+.nav-label {
+    font-weight: 600 !important;
+    letter-spacing: 0.2px;
+}
+
+.btn,
+button,
+.status-tab,
+.filter-btn,
+.nav-item,
+.category-item {
+    font-weight: 800 !important;
+    letter-spacing: 0.3px !important;
+}
+
+.btn,
+button {
+    border-radius: 12px !important;
+}
+
+.food-title,
+.food-name,
+.lane-title,
+.order-id,
+.reviewer-name {
+    font-weight: 900 !important;
+    letter-spacing: 0.15px;
+    color: #0f172a !important;
+}
+
+.food-price,
+.total-amount,
+#orderPrice,
+.quantity-value {
+    font-weight: 900 !important;
+    letter-spacing: 0.25px;
+    color: #0b1220 !important;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.card,
+.food-card,
+.food-item,
+.order-card,
+.review-card,
+.lane-section,
+.main-btn-card,
+.secondary-btn-card {
+    border-radius: 14px !important;
+    border: 1px solid rgba(157, 171, 199, 0.2) !important;
+}
+
+.food-card-header,
+.food-card-footer,
+.order-header {
+    background-image: linear-gradient(180deg, rgba(247, 250, 255, 0.95) 0%, rgba(241, 246, 255, 0.95) 100%) !important;
+}
+
+.bottom-nav,
+.top-header,
+.restaurant-header {
+    backdrop-filter: blur(8px);
+}
+
+.bottom-nav .nav-item {
+    transition: all 0.2s ease;
+}
+
+.bottom-nav .nav-item:hover {
+    transform: translateY(-1px);
+}
+
+/* ---------- Final clean style for manage page ---------- */
+body.page-manage {
+    background: #eef2f7 !important;
+    background-image: none !important;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body.page-manage::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image:
+        linear-gradient(rgba(238, 242, 247, 0.72), rgba(238, 242, 247, 0.72)),
+        url("https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1920&q=80");
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px) saturate(1.06);
+    transform: scale(1.06);
+}
+
+body.page-manage .container {
+    background: #ffffff !important;
+    background-image: none !important;
+    border: 1px solid #e2e8f2 !important;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08) !important;
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.92) !important;
+    backdrop-filter: blur(10px);
+}
+
+body.page-manage .btn-outline-primary,
+body.page-manage .btn-outline-danger,
+body.page-manage .btn-outline-success {
+    background: #ffffff !important;
+    color: #4c5f7a !important;
+    border: 1px solid #d5deea !important;
+    box-shadow: none !important;
+}
+
+body.page-manage .btn-outline-primary:hover,
+body.page-manage .btn-outline-danger:hover,
+body.page-manage .btn-outline-success:hover {
+    background: linear-gradient(135deg, #56a0ff 0%, #57c7ff 100%) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+}
