@@ -223,49 +223,28 @@ def getOrderItemList(request):
     if request.method == "POST":
         # 没有指定 order_id 就返回所有 order_item
         order_id = request.POST.get('order_id')
-        print(order_id)
-        with connection.cursor() as cursor:
-            SELECT_COL = '{0}orderitem.orderID_id orderID_id '
-            SELECT_COL += ',{0}order.table_id table_id '
-            SELECT_COL += ',{0}orderitem.foodID_id foodID_id '
-            SELECT_COL += ',{0}food.title food_name '
-            SELECT_COL += ',{0}orderitem.amount food_amount '
-            SELECT_COL += ',{0}orderitem.status status '
-            SELECT_COL = SELECT_COL.format('OrderSystem_')
+        order_items = (
+            OrderItem.objects
+            .select_related('orderID', 'foodID')
+            .filter(orderID__is_pay=False)
+            .order_by('orderID__table_id', 'orderID_id', 'foodID_id')
+        )
+        if order_id:
+            order_items = order_items.filter(orderID_id=order_id)
 
-            SELECT_FROM = '{0}orderitem, {0}food, {0}order '
-            SELECT_FROM = SELECT_FROM.format('OrderSystem_')
+        order_item_list = []
+        for item in order_items:
+            order_item_list.append({
+                'orderID_id': item.orderID_id,
+                'table_id': item.orderID.table_id,
+                'foodID_id': item.foodID_id,
+                'food_name': item.foodID.title,
+                'food_amount': item.amount,
+                'status': item.status,
+                'status_display': item.get_status_display(),
+            })
 
-            SELECT_WHERE = 'foodID_id = {0}food.ID '
-            SELECT_WHERE += ' and {0}order.ID = orderID_id '
-            SELECT_WHERE += ' and {0}order.is_pay = 0 '
-            SELECT_WHERE += (' and orderID_id=' +
-                             order_id) if order_id != None else ''
-            SELECT_WHERE = SELECT_WHERE.format('OrderSystem_')
-
-            SELECT_SQL = f'select {SELECT_COL} from {SELECT_FROM} where {SELECT_WHERE}'
-            SELECT_SQL += 'order by table_id'
-            print(SELECT_SQL)
-            '''
-            select 
-                OrderSystem_orderitem.orderID_id orderID_id ,
-                OrderSystem_order.table_id table_id ,
-                OrderSystem_orderitem.foodID_id foodID_id,
-                OrderSystem_food.title food_name ,
-                OrderSystem_orderitem.amount food_amount ,
-                OrderSystem_orderitem.status status 
-            from 
-                OrderSystem_orderitem, OrderSystem_food, OrderSystem_order  
-            where 
-                foodID_id = OrderSystem_food.ID and OrderSystem_order.ID = orderID_id  and OrderSystem_order.is_pay = 0 order by table_id
-            '''
-
-            cursor.execute(SELECT_SQL)
-
-            orderItemList = dictfetchall(cursor)
-            json_data = json.dumps(orderItemList)
-            print(json_data)
-            return HttpResponse(json_data)
+        return JsonResponse(order_item_list, safe=False)
 
 
 # 08更新餐桌表中的员工
@@ -288,20 +267,32 @@ def set_staff_charge_table(request):
 # 09上菜
 @login_required
 def delive_food(request):
-    print("上菜请求")
     if request.method == "POST":
         order_id = request.POST.get("order_id")
         food_id = request.POST.get("food_id")
-        print(order_id, food_id)
-        OrderItem.objects.filter(orderID_id=order_id, foodID_id=food_id).update(status=3)
         try:
-            return HttpResponse(json.dumps({
-                'status': "OK"
-            }))
-        except:
-            return HttpResponse(json.dumps({
-                'status': "FAIL"
-            }))
+            order_item = OrderItem.objects.get(orderID_id=order_id, foodID_id=food_id)
+        except OrderItem.DoesNotExist:
+            return JsonResponse({
+                'status': 'FAIL',
+                'message': '未找到对应订单菜品',
+            }, status=404)
+
+        try:
+            order_item.transition_to(OrderItem.KitchenStatus.SERVED)
+        except ValueError as err:
+            return JsonResponse({
+                'status': 'INVALID_TRANSITION',
+                'message': str(err),
+            }, status=400)
+
+        order_item.save(update_fields=['status'])
+        return JsonResponse({
+            'status': 'OK',
+            'message': '已上菜',
+            'current_status': order_item.status,
+            'current_status_display': order_item.get_status_display(),
+        })
 
 
 # 10后厨界面
@@ -314,29 +305,57 @@ def food_supplier(request):
 # 11后厨接单或者呼叫上菜
 @login_required
 def cook(request):
-    print(request.path)
     if request.method == "POST":
-        OP = request.POST.get("OP")
-        print("op=", OP)
-        order_id = int(request.POST.get("order_id"))
-        food_id = int(request.POST.get("food_id"))
-        print(order_id, food_id)
-        orderItem = OrderItem.objects.filter(orderID_id=order_id, foodID_id=food_id)
-        print(orderItem)
-        target_status = 1 if OP == "take_order" else 2
+        action = request.POST.get("action") or request.POST.get("OP")
+        order_id = request.POST.get("order_id")
+        food_id = request.POST.get("food_id")
+        action_map = {
+            'accept_order': OrderItem.KitchenStatus.ACCEPTED,
+            'start_cooking': OrderItem.KitchenStatus.COOKING,
+            'mark_ready': OrderItem.KitchenStatus.READY_TO_SERVE,
+            # 兼容旧参数
+            'take_order': OrderItem.KitchenStatus.ACCEPTED,
+            'ready_serve': OrderItem.KitchenStatus.READY_TO_SERVE,
+        }
 
-        if OP == "take_order":
-            orderItem.update(status=target_status)
-            orderItem.update(start_cook_time=datetime.datetime.now())
-        else:
-            orderItem.update(status=target_status)
-            orderItem.update(end_cook_time=datetime.datetime.now())
+        if action not in action_map:
+            return JsonResponse({
+                'status': 'INVALID_ACTION',
+                'message': '不支持的后厨操作',
+            }, status=400)
 
-        orderItem.save()
+        try:
+            order_item = OrderItem.objects.get(orderID_id=order_id, foodID_id=food_id)
+        except OrderItem.DoesNotExist:
+            return JsonResponse({
+                'status': 'FAIL',
+                'message': '未找到对应订单菜品',
+            }, status=404)
 
-        return HttpResponse(json.dumps({
+        try:
+            order_item.transition_to(action_map[action])
+        except ValueError as err:
+            return JsonResponse({
+                'status': 'INVALID_TRANSITION',
+                'message': str(err),
+            }, status=400)
+
+        now = datetime.datetime.now().time()
+        update_fields = ['status']
+        if order_item.status == OrderItem.KitchenStatus.COOKING and not order_item.start_cook_time:
+            order_item.start_cook_time = now
+            update_fields.append('start_cook_time')
+        if order_item.status == OrderItem.KitchenStatus.READY_TO_SERVE:
+            order_item.end_cook_time = now
+            update_fields.append('end_cook_time')
+        order_item.save(update_fields=update_fields)
+
+        return JsonResponse({
             'status': 'OK',
-        }))
+            'message': '状态更新成功',
+            'current_status': order_item.status,
+            'current_status_display': order_item.get_status_display(),
+        })
 
 
 # 辅助函数 数据库查询结果转换成 json/dict'''
@@ -541,4 +560,3 @@ def review_list(request):
     评价列表页面
     """
     return render(request, 'ReviewList.html')
-

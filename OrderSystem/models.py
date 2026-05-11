@@ -57,12 +57,32 @@ class Order(models.Model):
 
 # 订单状态表
 class OrderItem(models.Model):
+    class KitchenStatus(models.IntegerChoices):
+        PENDING = 0, '待接单'
+        ACCEPTED = 1, '已接单'
+        COOKING = 2, '制作中'
+        READY_TO_SERVE = 3, '待上菜'
+        SERVED = 4, '已上菜'
+        CANCELED = 5, '已取消'
+
+    STATUS_TRANSITIONS = {
+        KitchenStatus.PENDING: {KitchenStatus.ACCEPTED, KitchenStatus.CANCELED},
+        KitchenStatus.ACCEPTED: {KitchenStatus.COOKING, KitchenStatus.CANCELED},
+        KitchenStatus.COOKING: {KitchenStatus.READY_TO_SERVE, KitchenStatus.CANCELED},
+        KitchenStatus.READY_TO_SERVE: {KitchenStatus.SERVED},
+        KitchenStatus.SERVED: set(),
+        KitchenStatus.CANCELED: set(),
+    }
+
     orderID = models.ForeignKey('Order', on_delete=models.CASCADE, verbose_name="订单")
     foodID = models.ForeignKey('Food', on_delete=models.DO_NOTHING, verbose_name="菜品")
     amount = models.IntegerField(default=1)
     sum_price = models.FloatField(default=0, verbose_name="总价")
-    status = models.IntegerField(default=0, choices=(  # 0-后厨未接单  1-后厨在准备 2-等待上菜 3-上菜完成
-        (0, '后厨未接单'), (1, '后厨在准备'), (2, '等待上菜'), (3, '上菜完成')), verbose_name="状态")
+    status = models.IntegerField(
+        default=KitchenStatus.PENDING,
+        choices=KitchenStatus.choices,
+        verbose_name="状态",
+    )
     start_cook_time = models.TimeField(null=True, verbose_name="开始制作时间")
     end_cook_time = models.TimeField(null=True, verbose_name="制作结束时间")
     comment = models.CharField(max_length=50, verbose_name="备注")
@@ -74,6 +94,19 @@ class OrderItem(models.Model):
         # 设置Admin的显示内容
         verbose_name = '订单状态表'
         verbose_name_plural = '订单状态表'
+
+    def can_transition_to(self, target_status):
+        return target_status in self.STATUS_TRANSITIONS.get(
+            self.KitchenStatus(self.status), set()
+        )
+
+    def transition_to(self, target_status):
+        target_status = self.KitchenStatus(target_status)
+        if not self.can_transition_to(target_status):
+            raise ValueError(
+                f'非法状态流转：{self.get_status_display()} -> {target_status.label}'
+            )
+        self.status = target_status
 
 
 # 员工信息表
