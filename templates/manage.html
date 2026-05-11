@@ -1,0 +1,197 @@
+{% load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'bootstrap-4.3.1-dist/css/bootstrap.min.css'%}">
+    <link rel="stylesheet" href="{% static '/css/manage.css'%}">
+    <link rel="stylesheet" href="{% static 'css/bs4.pop.css'%}">
+    <link rel="stylesheet" href="{% static 'css/theme-modern.css' %}">
+    <style>[v-cloak]{display:none;}</style>
+    <title>智能点餐系统-管理后台</title>
+</head>
+
+<body class="page-manage">
+    <div id="manage-app" v-cloak>
+    <div class="container" style="margin-top: 2%">
+        <h1>后台管理系统 唯有爱和美食不可辜负❤</h1>
+        <div class="manage-head-tools row align-items-center mt-3 mb-2">
+            <div class="col">
+                <div class="manage-search-wrap">
+                    <span class="manage-search-icon">🔍</span>
+                    <input type="text" class="manage-search-input" placeholder="搜索订单号...">
+                </div>
+            </div>
+            <div class="col-auto">
+                <button class="btn manage-head-btn">⚙ 管理</button>
+            </div>
+        </div>
+        <hr>
+        <div class="row mt-3">
+            <!-- 左侧 餐桌负责状态表 + Log Out -->
+            <div class="col-4">
+                <div class="row ml-1"><h2>你好，{{user.username}}</h2></div>
+                <div class="row">
+                    <form class="col" action="/accounts/signout/" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-block btn-danger">退出登录</button>
+                    </form>
+                    <div class="col"><a href="/accounts/signup/" class="btn btn-block btn-primary">注  册</a></div>
+                </div>
+                <table class="table text-center mt-3" id="table-info-table">
+                    <caption>
+                        餐桌状态表
+                        <!-- <button class="btn btn-success btn-sm" id='add-table'>添加</button> -->
+                    </caption>
+                    <tr>
+                        <th>桌号</th>
+                        <th>桌名</th>
+                        <!-- <th>负责人</th> -->
+                        <th>状态</th>
+                    </tr>
+                    {% for tableInfo in tableInfoList %}
+                    <tr class="" id="table-{{tableInfo.table_id}}" data-toggle="pill"
+                        href="#table-{{tableInfo.table_id}}-content" role="tab" table_id={{tableInfo.table_id}}
+                        staff_id={{tableInfo.staff_id}}>
+                        <td>{{tableInfo.table_id}}</td>
+                        <td>{{tableInfo.table_name}}</td>
+                        <!-- <td>{{tableInfo.staff_name}}</td> -->
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <!-- 右侧 区域 -->
+            <div class="col ml-1">
+                <!-- 顶部的几个按钮 -->
+                <div class="row" id="entry-button-group">
+                    <div class="col">
+                        <a href="/order/check"><button class="btn btn-block btn-outline-primary">结 账</button></a>
+                    </div>
+                    <div class="col">
+                        <a href="/manage/orders"><button class="btn btn-block btn-outline-danger">订 单</button></a>
+                    </div>
+                    <div class="col">
+                        <a href="/manage/staffs"><button class="btn btn-block btn-outline-danger">员 工</button></a>
+                    </div>
+                    <div class="col">
+                        <a href="/manage/tables"><button class="btn btn-block btn-outline-danger">餐 桌</button></a>
+                    </div>
+                    <div class="col">
+                        <a href="/manage/foods"><button class="btn btn-block btn-outline-danger">菜 品</button></a>
+                    </div>
+                    <div class="col">
+                        <a href="/"><button class="btn btn-block btn-outline-success">主 页</button></a>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    {% for tableInfo in tableInfoList %}
+                    <div class="tab-pane fade table-detail" table_id={{tableInfo.table_id}}
+                        id="table-{{tableInfo.table_id}}-content" role="tabpanel">
+                        <hr>
+                        <h4 class="row">
+                            <div class="col-4">
+                                桌号：{{tableInfo.table_id}}
+                            </div>
+                            <!-- <button class="col-1 btn btn-sm btn-danger">删除</button> -->
+                            <div class="col-4">
+                                负责人：
+                                <span class="badge badge-primary badge-pill"
+                                    id="staff-name-in-table-{{tableInfo.table_id}}" data-toggle="collapse"
+                                    href="#staff-list-in-table-{{tableInfo.table_id}}" role="button">
+                                    {{tableInfo.staff_name}}
+                                </span>
+                            </div>
+                        </h4>
+                        <hr>
+                        <div class="collapse" id="staff-list-in-table-{{tableInfo.table_id}}">
+                            <div class="card card-body">
+                                <div class="row px-3">
+                                    {% for staff in staffList %}
+                                    <button class="staff-opt-btn col-2 btn btn-light px-0" staff_id={{staff.ID}}>
+                                        {{staff.name}}
+                                    </button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2" style="font-weight: bold">
+                            <div class="col">订单号</div>
+                            <div class="col">名称</div>
+                            <div class="col">数量</div>
+                            <div class="col-3">状态</div>
+                            <div class='col-2'></div>
+                        </div>
+
+                        <div class="order-item-table">
+                            <!-- 动态填充 -->
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col">
+                <div id="manageCarousel" class="carousel slide manage-carousel" data-ride="carousel" data-interval="3200">
+                    <ol class="carousel-indicators">
+                        <li data-target="#manageCarousel" data-slide-to="0" class="active"></li>
+                        <li data-target="#manageCarousel" data-slide-to="1"></li>
+                        <li data-target="#manageCarousel" data-slide-to="2"></li>
+                    </ol>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="manage-carousel-banner slide-1">
+                                <div class="manage-carousel-text">
+                                    <h3>欢迎使用管理后台</h3>
+                                    <p>统一查看桌台、订单和员工信息</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="manage-carousel-banner slide-2">
+                                <div class="manage-carousel-text">
+                                    <h3>高效收银与结账</h3>
+                                    <p>快速处理待结账订单，提升门店效率</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="manage-carousel-banner slide-3">
+                                <div class="manage-carousel-text">
+                                    <h3>数据与服务可视化</h3>
+                                    <p>让后厨、前台与管理协同更顺畅</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#manageCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#manageCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js"></script>
+    <script src="{% static 'js/csrf.js' %}"></script>
+    <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/bs4.pop.js' %}"></script>
+    <script src="{% static 'js/vue/manage-app.js' %}"></script>
+
+</body>
+
+</html>

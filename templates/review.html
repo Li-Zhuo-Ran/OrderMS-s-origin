@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>评价页面</title>
+    <link rel="stylesheet" href="{% static 'bootstrap-4.3.1-dist/css/bootstrap.min.css'%}">
+    <link rel="stylesheet" href="{% static 'css/theme-modern.css' %}">
+    <style>        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Microsoft YaHei', sans-serif;
+            padding: 20px;
+        }
+
+        .review-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-top: 2%;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .star-rating {
+            direction: rtl;
+            unicode-bidi: bidi-override;
+            color: #ddd;
+            font-size: 2em;
+        }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            display: inline-block;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .star-rating label:before {
+            content: "\2605";
+            display: block;
+        }
+
+        .star-rating input[type="radio"]:checked ~ label:before,
+        .star-rating input[type="radio"]:hover ~ label:before {
+            color: #ffcc00;
+        }
+
+        .star-rating label:hover ~ label:before {
+            color: #ffcc00;
+        }
+    </style>
+</head>
+<body class="page-review">
+    <div id="review-app" class="container" v-cloak>
+        <div class="row justify-content-center">
+            <div class="col-lg-8 review-container">
+                <h2 class="text-center mb-4">发表评价</h2>
+
+                <form method="POST" action="{% url 'submit_review' %}" @submit.prevent="submitReview">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="name">姓名（可选）:</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="请输入您的姓名" v-model.trim="form.name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>评分:</label>
+                        <div class="star-rating">
+                            <template v-for="star in ratingOptions" :key="star">
+                                <input
+                                    type="radio"
+                                    :id="'star' + star"
+                                    name="rating"
+                                    :value="star"
+                                    v-model="form.rating"
+                                    required
+                                />
+                                <label :for="'star' + star" :title="star + '星'">[[ star ]] stars</label>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comment">评价内容:</label>
+                        <textarea class="form-control" id="comment" name="comment" rows="5" placeholder="请写下您的评价..." required v-model.trim="form.comment"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" :disabled="submitting">[[ submitting ? '提交中...' : '提交评价' ]]</button>
+                    <p v-if="message" class="text-center mt-3 mb-0" :class="messageClass">[[ message ]]</p>
+                </form>
+
+                <hr class="my-4">
+
+                <h3 class="mb-3">顾客评价</h3>
+                <div id="reviews-list">
+                    <div v-if="reviews.length === 0" class="text-center text-muted">暂无评价</div>
+                    <div v-else>
+                        <div class="card mb-3" v-for="review in reviews" :key="review.created_at + review.comment">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title">[[ review.name || '匿名用户' ]]</h5>
+                                    <div v-html="renderStars(review.rating)"></div>
+                                </div>
+                                <p class="card-text">[[ review.comment ]]</p>
+                                <small class="text-muted">[[ review.created_at ]]</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script>
+        window.__REVIEW_APP_DATA__ = {
+            submitUrl: '{% url "submit_review" %}',
+            reviewsUrl: '{% url "get_reviews" %}',
+            csrfToken: document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+        };
+    </script>
+    <script src="{% static 'js/vue/review-app.js' %}"></script>
+    <script>
+        window.initReviewApp();
+    </script>
+</body>
+</html>

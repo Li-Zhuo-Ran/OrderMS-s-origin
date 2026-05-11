@@ -1,0 +1,521 @@
+{% load static%}
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'bootstrap-4.3.1-dist/css/bootstrap.min.css'%}">
+    <link rel="stylesheet" href="{% static 'css/theme-modern.css' %}">
+    <title>Django餐厅点餐系统-订单信息</title>
+        <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Microsoft YaHei', sans-serif;
+            padding-bottom: 70px;
+            margin: 0;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        /* 顶部餐厅信息 */
+        .restaurant-header {
+            background: white;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .restaurant-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .restaurant-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            margin-right: 1rem;
+        }
+
+        .restaurant-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .restaurant-slogan {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin: 0.3rem 0 0 0;
+        }
+
+        /* 搜索和管理按钮 */
+        .header-actions {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            padding-left: 2.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #43e97b;
+            box-shadow: 0 0 0 3px rgba(67, 233, 123, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #95a5a6;
+        }
+
+        .manage-btn {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(67, 233, 123, 0.3);
+        }
+
+        .manage-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 233, 123, 0.4);
+        }
+
+        /* 页面标题 */
+        .page-title-section {
+            padding: 1.5rem 1.5rem 1rem;
+        }
+
+        .page-title {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 1.8rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .page-title::before {
+            content: '📋';
+            margin-right: 0.8rem;
+            font-size: 2rem;
+        }
+
+        /* 订单卡片容器 */
+        .orders-container {
+            padding: 0 1.5rem 2rem;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border-left: 5px solid #4facfe;
+        }
+
+        .order-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-id {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .order-status {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .order-status.paid {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .order-status.unpaid {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .order-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+        }
+
+        .order-info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            color: #95a5a6;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-value {
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .order-total {
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 2px dashed #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-label {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff6b35;
+        }
+
+        .view-detail-btn {
+            display: inline-block;
+            margin-top: 1rem;
+            width: 100%;
+            padding: 0.7rem;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(79, 172, 254, 0.3);
+        }
+
+        .view-detail-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+            color: white;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: #95a5a6;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        /* 底部导航栏 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #95a5a6;
+            transition: all 0.3s;
+            padding: 0.3rem 1rem;
+            border-radius: 10px;
+        }
+
+        .nav-item:hover {
+            background: #f8f9fa;
+        }
+
+        .nav-item.active {
+            color: #4facfe;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .nav-label {
+            font-size: 0.75rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .order-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .restaurant-header {
+                padding: 1rem;
+            }
+
+            .page-title-section {
+                padding: 1rem 1rem 0.5rem;
+            }
+
+            .orders-container {
+                padding: 0 1rem 2rem;
+            }
+
+            .order-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="page-orders">
+    <!-- 顶部餐厅信息 -->
+    <div class="restaurant-header">
+        <div class="restaurant-info">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=restaurant" alt="Logo" class="restaurant-logo">
+            <div>
+                <h1 class="restaurant-name">仟佰味餐厅</h1>
+                <p class="restaurant-slogan">唯有爱与美食不可辜负 🎉</p>
+            </div>
+        </div>
+        
+        <div class="header-actions">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="搜索订单号...">
+            </div>
+            <button class="manage-btn" onclick="location.href='/manage'">⚙️ 管理</button>
+        </div>
+    </div>
+
+    <!-- 页面标题 -->
+    <div class="page-title-section">
+        <h2 class="page-title">订单信息详情</h2>
+    </div>
+
+    <!-- 订单列表容器 -->
+    <div class="orders-container">
+        {% if orders %}
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-id">订单 #{{order.ID}}</div>
+                    <div class="order-status {%if order.is_pay%}paid{%else%}unpaid{%endif%}">
+                        {%if order.is_pay%}✓ 已支付{%else%}○ 未支付{%endif%}
+                    </div>
+                </div>
+                
+                <div class="order-info-grid">
+                    <div class="order-info-item">
+                        <span class="info-label">创建时间</span>
+                        <span class="info-value">{{order.create_time|date:'Y-m-d H:i:s'}}</span>
+                    </div>
+                    <div class="order-info-item">
+                        <span class="info-label">支付时间</span>
+                        <span class="info-value">
+                            {%if order.pay_time%}
+                                {{order.pay_time|date:'Y-m-d H:i:s'}}
+                            {%else%}
+                                未支付
+                            {%endif%}
+                        </span>
+                    </div>
+                    <div class="order-info-item">
+                        <span class="info-label">桌号</span>
+                        <span class="info-value">{{order.table_id}} 桌</span>
+                    </div>
+                    <div class="order-info-item">
+                        <span class="info-label">菜品数量</span>
+                        <span class="info-value">{{order.food_amount}} 份</span>
+                    </div>
+                    <div class="order-info-item">
+                        <span class="info-label">员工 ID</span>
+                        <span class="info-value">#{{order.staff_id}}</span>
+                    </div>
+                </div>
+
+                <div class="order-total">
+                    <span class="total-label">订单总额</span>
+                    <span class="total-amount">¥{{order.total_price}}</span>
+                </div>
+
+                <a href="/order/q{{order.ID}}" class="view-detail-btn">
+                    查看详情 →
+                </a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <p>暂无订单记录</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="bottom-nav">
+        <a href="/" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">厨房</span>
+        </a>
+        <a href="/order" class="nav-item">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">订单</span>
+        </a>
+        <a href="/food_supplier" class="nav-item">
+            <span class="nav-icon">👨‍🍳</span>
+            <span class="nav-label">发现</span>
+        </a>
+        <a href="/manage" class="nav-item active">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">管理</span>
+        </a>
+    </div>
+
+    <script src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js"></script>
+    <script>
+        // 搜索功能
+        $('.search-input').on('keypress', function(e) {
+            if (e.which === 13) {
+                const searchText = $(this).val();
+                console.log('搜索订单：' + searchText);
+                // 可以在这里添加搜索逻辑
+            }
+        });
+
+        // 导航栏激活状态
+        $('.nav-item').click(function() {
+            $('.nav-item').removeClass('active');
+            $(this).addClass('active');
+        });
+    </script>
+</body>
+
+    <div class="container page-header">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="page-title">订单信息详情</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card-container">
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>订单号</th>
+                                <th>创建时间</th>
+                                <th>支付时间</th>
+                                <th>桌号</th>
+                                <th>食物总数</th>
+                                <th>总价</th>
+                                <th>员工ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>
+                                    <a class="badge {%if order.is_pay%}badge-success{%else%}badge-danger{%endif%} order-id-link" 
+                                       href="/order/q{{order.ID}}">
+                                        {{order.ID}}
+                                    </a>
+                                </td>
+                                <td>{{order.create_time|date:'Y-m-d H:i:s'}}</td>
+                                <td>{{order.pay_time|date:'Y-m-d H:i:s'}}</td>
+                                <td>{{order.table_id}}</td>
+                                <td>{{order.food_amount}}</td>
+                                <td>¥{{order.total_price}}</td>
+                                <td>{{order.staff_id}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="BottomNavBar NavBar fixed-bottom">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12 text-center">
+                    <a href="/manage">
+                        <button class="btn nav-btn" id="OrderSubmit">返 回</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js"></script>
+    <script src="{% static 'js/home.js' %}"></script>
+</body>
+
+</html>

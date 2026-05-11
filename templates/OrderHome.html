@@ -1,0 +1,753 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'bootstrap-4.3.1-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/OrderHome.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bs4.pop.css' %}">
+    <link rel="stylesheet" href="{% static 'css/theme-modern.css' %}">
+    <title>智能点餐系统-顾客点菜</title>
+            <style>        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Microsoft YaHei', sans-serif;
+            padding-bottom: 70px;
+            margin: 0;
+        }
+
+        /* 顶部餐厅信息 */
+        .restaurant-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .restaurant-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .restaurant-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            margin-right: 1rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .restaurant-logo:hover {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .restaurant-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .restaurant-slogan {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 0.9rem;
+            margin: 0.3rem 0 0 0;
+        }
+
+        /* 搜索和管理按钮 */
+        .header-actions {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            padding-left: 2.5rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #f5576c;
+            font-size: 1.1rem;
+        }
+
+        .manage-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .manage-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
+        }
+
+        /* 主容器 */
+        .main-container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin: 1rem auto;
+            max-width: 1400px;
+        }
+
+        /* 左侧分类导航 */
+        .category-sidebar {
+            background: linear-gradient(180deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-item {
+            padding: 0.9rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            color: #d35400;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-item:hover {
+            background: rgba(255, 255, 255, 0.6);
+            transform: translateX(5px);
+        }
+
+        .category-item.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .category-icon {
+            margin-right: 0.8rem;
+            font-size: 1.3rem;
+        }
+
+        /* 右侧菜品列表 */
+        .food-list-container {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+        }
+
+        .food-section-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 1.5rem 0 1rem;
+            padding-left: 0.8rem;
+            border-left: 5px solid #f5576c;
+            display: flex;
+            align-items: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .food-section-title::before {
+            content: '🍲';
+            margin-right: 0.5rem;
+        }
+
+        .food-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 15px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .food-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.2);
+            border-color: #f5576c;
+        }
+
+        .food-image {
+            width: 90px;
+            height: 90px;
+            border-radius: 15px;
+            object-fit: cover;
+            margin-right: 1.2rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .food-info {
+            flex: 1;
+        }
+
+        .food-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .food-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .food-stock {
+            color: #27ae60;
+            font-size: 0.9rem;
+            background: rgba(39, 174, 96, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+        }
+
+        .food-stock-value {
+            color: #27ae60;
+            font-weight: 700;
+        }
+
+        .food-price {
+            color: #f5576c;
+            font-weight: 800;
+            font-size: 1.3rem;
+            text-shadow: 1px 1px 2px rgba(245, 87, 108, 0.2);
+        }
+
+        .food-price::before {
+            content: '￥';
+            font-size: 0.9rem;
+        }
+
+        .add-food-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 0.8rem;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .add-food-btn:hover {
+            transform: scale(1.15) rotate(90deg);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+        }
+
+        /* 购物车悬浮按钮 */
+        .cart-float-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 25px rgba(102, 126, 234, 0.5);
+            transition: all 0.3s;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-float-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.7);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(245, 87, 108, 0.4);
+        }
+
+        /* 订单列表侧边栏 */
+        .order-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 350px;
+            height: 100vh;
+            background: linear-gradient(180deg, #ffecd2 0%, #fcb69f 100%);
+            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transition: all 0.3s;
+            overflow-y: auto;
+        }
+
+        .order-sidebar.show {
+            right: 0;
+        }
+
+        .order-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .order-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-order-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .close-order-btn:hover {
+            transform: scale(1.2);
+        }
+
+        #OrderList {
+            padding: 1rem;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+
+        .order-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.2);
+        }
+
+        /* 桌号选择 */
+        .table-selection {
+            background: white;
+            border-radius: 15px;
+            padding: 1.2rem;
+            margin: 1rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-selection-title {
+            font-weight: 700;
+            color: #764ba2;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .room-opt-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 6px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s;
+            border: 2px solid #dee2e6;
+            background: white;
+            font-size: 1.1rem;
+        }
+
+        .room-opt-btn:hover {
+            transform: scale(1.15);
+            border-color: #f5576c;
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.3);
+        }
+
+        .room-opt-btn.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-color: #f5576c;
+            box-shadow: 0 5px 20px rgba(245, 87, 108, 0.5);
+            transform: scale(1.1);
+        }
+
+        /* 底部导航栏 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 -5px 25px rgba(102, 126, 234, 0.4);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+            z-index: 1000;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s;
+            padding: 0.5rem 1.2rem;
+            border-radius: 15px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .nav-item.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-icon {
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .nav-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* 隐藏元素 */
+        .d-none-mobile {
+            display: none;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .category-sidebar {
+                height: auto;
+                display: flex;
+                overflow-x: auto;
+                padding: 0.8rem;
+            }
+
+            .category-item {
+                min-width: max-content;
+                margin-bottom: 0;
+                margin-right: 0.5rem;
+            }
+
+            .food-list-container {
+                height: auto;
+            }
+
+            .order-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+
+            .main-container {
+                margin: 0.5rem;
+                padding: 1rem;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .category-sidebar {
+                height: calc(100vh - 220px);
+                overflow-y: auto;
+            }
+
+            .food-list-container {
+                height: calc(100vh - 220px);
+                overflow-y: auto;
+            }
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+
+<body class="page-order-home">
+<div id="order-home-app" v-cloak>
+<form style="display:none;">{% csrf_token %}</form>
+<!-- 顶部餐厅信息 -->
+<div class="restaurant-header">
+    <div class="restaurant-info">
+        <img src="{% static 'images/qianbowei-logo.png' %}" alt="重庆鸡公煲 Logo" class="restaurant-logo">
+        <div>
+            <h1 class="restaurant-name">仟佰味餐厅</h1>
+            <p class="restaurant-slogan">唯有爱与美食不可辜负 🎉</p>
+        </div>
+    </div>
+    
+    <div class="header-actions">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="搜索菜品...">
+        </div>
+        <button class="manage-btn" onclick="location.href='/'">⚙️ 返回</button>
+    </div>
+</div>
+
+<div class="container-fluid main-container">
+    <div class="row" style="margin: 0;">
+        <!-- 左侧分类导航 -->
+        <div class="col-md-3 col-lg-2 category-sidebar d-none d-md-block">
+            <div class="category-item active" data-target="all">
+                <span class="category-icon">🍽️</span>
+                <span>全部</span>
+            </div>
+            {% for foodType in foodTypeList %}
+            <div class="category-item" data-target="{{ foodType.ID }}">
+                <span class="category-icon">
+                    {% if forloop.counter == 1 %}🥩
+                    {% elif forloop.counter == 2 %}🥬
+                    {% elif forloop.counter == 3 %}🍲
+                    {% elif forloop.counter == 4 %}🍝
+                    {% elif forloop.counter == 5 %}🍚
+                    {% elif forloop.counter == 6 %}🧋
+                    {% else %}🍹{% endif %}
+                </span>
+                <span>{{ foodType.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+         <!-- 右侧菜品列表 -->
+        <div class="col-md-9 col-lg-10 food-list-container">
+             <!-- 全部菜品 -->
+            <div class="food-section" id="section-all">
+                <h2 class="food-section-title">全部菜品</h2>
+                {% for food in foodList %}
+                <div class="food-item" foodID="{{ food.ID }}" data-category="all">
+                    {% if food.title == '重庆鸡公煲' %}
+                        <img src="{% static 'images/dishes/chongqing_chicken.jpg' %}" alt="{{ food.title }}" class="food-image">
+                    {% elif food.title == '宫保鸡丁' %}
+                        <img src="{% static 'images/dishes/gongbao_chicken.jpg' %}" alt="{{ food.title }}" class="food-image">
+                    {% elif food.title == '鱼香肉丝' %}
+                        <img src="{% static 'images/dishes/yuxiang_pork.jpg' %}" alt="{{ food.title }}" class="food-image">
+                    {% elif food.title == '麻婆豆腐' %}
+                        <img src="{% static 'images/dishes/mapo_tofu.jpg' %}" alt="{{ food.title }}" class="food-image">
+                    {% elif food.title == '米饭' %}
+                        <img src="{% static 'images/dishes/rice.jpg' %}" alt="{{ food.title }}" class="food-image">
+                    {% elif food.title == '可乐' %}
+                        <img src="{% static 'images/dishes/coke.jpg' %}" alt="{{ food.title }}" class="food-image">
+                    {% elif food.title == '蒜苗回锅肉' %}
+                        <img src="{% static 'images/dishes/suanmiao_pork.jpg' %}" alt="{{ food.title }}" class="food-image">
+                    {% elif food.title == '重庆黄焖鸡' %}
+                        <img src="{% static 'images/dishes/chongqing-Braised-chicken.jpg' %}" alt="{{ food.title }}" class="food-image">
+                    {% else %}
+                        <img src="{% static 'images/dishes/default.jpg' %}" alt="{{ food.title }}" class="food-image">
+                    {% endif %}
+                    <div class="food-info">
+                        <h3 class="food-title">{{ food.title }}</h3>
+                        <div class="food-details">
+                            <span class="food-stock">剩余：<span class="food-stock-value">{{ food.amount }}</span></span>
+                            <span class="food-price">{{ food.price }}</span>
+                        </div>
+                    </div>
+                    <button class="add-food-btn" onclick="addToOrder({{ food.ID }}, '{{ food.title }}', {{ food.price }})">+</button>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- 按分类显示菜品 -->
+            {% for foodType in foodTypeList %}
+            <div class="food-section" id="section-{{ foodType.ID }}" style="display: none;">
+                <h2 class="food-section-title">{{ foodType.name }}</h2>
+                {% for food in foodList %}
+                    {% if food.foodType.ID == foodType.ID %}
+                    <div class="food-item" foodID="{{ food.ID }}" data-category="{{ foodType.ID }}">
+                        {% if food.title == '重庆鸡公煲' %}
+                            <img src="{% static 'images/dishes/chongqing_chicken.jpg' %}" alt="{{ food.title }}" class="food-image">
+                        {% elif food.title == '宫保鸡丁' %}
+                            <img src="{% static 'images/dishes/gongbao_chicken.jpg' %}" alt="{{ food.title }}" class="food-image">
+                        {% elif food.title == '鱼香肉丝' %}
+                            <img src="{% static 'images/dishes/yuxiang_pork.jpg' %}" alt="{{ food.title }}" class="food-image">
+                        {% elif food.title == '麻婆豆腐' %}
+                            <img src="{% static 'images/dishes/mapo_tofu.jpg' %}" alt="{{ food.title }}" class="food-image">
+                        {% elif food.title == '米饭' %}
+                            <img src="{% static 'images/dishes/rice.jpg' %}" alt="{{ food.title }}" class="food-image">
+                        {% elif food.title == '可乐' %}
+                            <img src="{% static 'images/dishes/coke.jpg' %}" alt="{{ food.title }}" class="food-image">
+                        {% else %}
+                            <img src="{% static 'images/dishes/default.jpg' %}" alt="{{ food.title }}" class="food-image">
+                        {% endif %}
+                        <div class="food-info">
+                            <h3 class="food-title">{{ food.title }}</h3>
+                            <div class="food-details">
+                                <span class="food-stock">剩余：<span class="food-stock-value">{{ food.amount }}</span></span>
+                                <span class="food-price">{{ food.price }}</span>
+                            </div>
+                        </div>
+                        <button class="add-food-btn" onclick="addToOrder({{ food.ID }}, '{{ food.title }}', {{ food.price }})">+</button>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- 购物车悬浮按钮 -->
+<button class="cart-float-btn" onclick="toggleOrderSidebar()">
+    🛒
+    <span class="cart-badge" id="cartCount">0</span>
+</button>
+
+<!-- 订单列表侧边栏 -->
+<div class="order-sidebar" id="orderSidebar">
+    <div class="order-header">
+        <h3 class="order-title">我的订单</h3>
+        <button class="close-order-btn" onclick="toggleOrderSidebar()">×</button>
+    </div>
+    <div id="OrderList">
+        <!-- 订单明细将通过 JavaScript 动态添加 -->
+    </div>
+    
+    <!-- 桌号选择 -->
+    <div class="table-selection">
+        <p class="table-selection-title">请选择桌号：</p>
+        <div class="d-flex flex-wrap justify-content-center">
+            {% for table in tableList %}
+            <button class="room-opt-btn btn btn-light" onclick="selectTable({{ table.ID }})">{{ table.ID }}</button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 结账区域 -->
+    <div style="background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 1.2rem; margin: 1rem; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); margin-bottom: 80px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid #f0f0f0;">
+            <span style="font-size: 1.3rem; font-weight: bold; color: #764ba2;">💰 总计：</span>
+            <span id="orderPrice" style="font-size: 1.8rem; font-weight: bold; color: #f5576c;">￥0.00</span>
+        </div>
+        <button id="OrderSubmit" style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 25px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transition: all 0.3s;" onclick="submitOrder()">
+            🧾 确认下单
+        </button>
+    </div>
+</div>
+
+<!-- 底部导航栏 -->
+<div class="bottom-nav">
+    <a href="/" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">主页</span>
+    </a>
+    <a href="/order/" class="nav-item active">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">点餐</span>
+    </a>
+    <a href="/food_supplier/" class="nav-item">
+        <span class="nav-icon">👨‍</span>
+        <span class="nav-label">订单</span>
+    </a>
+    <a href="/review/list/page/" class="nav-item">
+        <span class="nav-icon">😊</span>
+        <span class="nav-label">评价</span>
+    </a>
+</div>
+
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="{% static 'js/csrf.js' %}"></script>
+<script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.js' %}"></script>
+<script src="{% static 'js/bs4.pop.js' %}"></script>
+<script src="{% static 'js/Order.js' %}"></script>
+<script src="{% static 'js/vue/order-home-app.js' %}"></script>
+
+</body>
+
+
+</html>
